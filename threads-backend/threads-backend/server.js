@@ -1,0 +1,15 @@
+﻿require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { seed } = require('./db');
+const app = express();
+app.use(cors({ origin: '*' }));
+app.use(express.json());
+app.use('/api/auth',     require('./routes/auth'));
+app.use('/api/products', require('./routes/products'));
+app.use('/api/orders',   require('./routes/orders'));
+app.use('/api/users',    require('./routes/users'));
+app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
+const PORT = process.env.PORT || 3001;
+seed().then(() => app.listen(PORT, () => console.log(`THREADS API running on http://localhost:${PORT}`)));
